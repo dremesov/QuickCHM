@@ -70,6 +70,8 @@
     [_homePath release];
     [_tocPath release];
     [_indexPath release];
+    
+    [super dealloc];
 }
 
 
@@ -99,7 +101,7 @@
 
 static inline unsigned short readShort( NSData *data, unsigned int offset ) {
     NSRange valueRange = { offset, 2 };
-    unsigned short value;
+    uint16_t value;
     
     [data getBytes:(void *)&value range:valueRange];
     return NSSwapLittleShortToHost( value );
@@ -107,7 +109,7 @@ static inline unsigned short readShort( NSData *data, unsigned int offset ) {
 
 static inline unsigned long readLong( NSData *data, unsigned int offset ) {
     NSRange valueRange = { offset, 4 };
-    unsigned long value;
+    uint32_t value;
     
     [data getBytes:(void *)&value range:valueRange];
     return NSSwapLittleLongToHost( value );

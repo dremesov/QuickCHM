@@ -48,7 +48,7 @@ OSStatus GeneratePreviewForURL(void *thisInterface, QLPreviewRequestRef preview,
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	CHMDocument *doc = [[CHMDocument alloc] init];
 	
-	if ([doc readFromFile:[(NSURL *)url path] ofType:nil]) {
+	if ([doc readFromURL:(NSURL*)url ofType:nil error:nil]) {
 		NSURL *homeUrl = [doc currentLocation];
 		// Get the main page data
 		NSData *data = [doc urlData:homeUrl];	

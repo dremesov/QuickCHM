@@ -78,7 +78,7 @@ OSStatus GenerateThumbnailForURL(void *thisInterface, QLThumbnailRequestRef thum
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     CHMDocument *doc = [[CHMDocument alloc] init];
 	
-	if ([doc readFromFile:[(NSURL *)url path] ofType:nil]) {
+	if ([doc readFromURL:(NSURL *)url ofType:nil error:nil]) {
 		// Read main page
 		NSData *mainPageData = [doc urlData:[doc currentLocation]];
 		
@@ -114,7 +114,7 @@ void elementDidStart(CoverContext *context, const xmlChar *name, const xmlChar *
 				// find src
 				atts ++ ;
 				NSURL *url;
-				NSString *imgPath = [NSString stringWithCString:(char *)*atts];
+				NSString *imgPath = [NSString stringWithCString:(char *)*atts encoding:NSWindowsCP1251StringEncoding];
 				if (**atts == '/') {
 					// absolute path
 					url = [CHMURLProtocol URLWithPath:imgPath inContainer:context->container];

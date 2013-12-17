@@ -204,7 +204,7 @@ static inline NSString * readTrimmedString( NSData *data, unsigned long offset )
     if( windowsData && stringsData ) {
 	const unsigned long entryCount = readLong( windowsData, 0 );
 	const unsigned long entrySize = readLong( windowsData, 4 );
-	NSLog( @"Entries: %u x %u bytes", entryCount, entrySize );
+        NSLog( @"Entries: %lu x %lu bytes", entryCount, entrySize );
 	
 	for( int entryIndex = 0; entryIndex < entryCount; ++entryIndex ) {
 	    unsigned long entryOffset = 8 + ( entryIndex * entrySize );

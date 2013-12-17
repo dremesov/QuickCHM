@@ -41,16 +41,16 @@ static NSMutableDictionary *containerReg = nil;
     NSURL *url = [NSURL URLWithString:path relativeToURL:baseURL];
     
     if( baseURL && url == nil ) {
-	// Something is wrong, perhaps path is not well-formed. Try percent-
-	// escaping characters. It's not clear what encoding should be used,
-	// but for now let's just use Latin1.
-	CFStringRef str = CFURLCreateStringByAddingPercentEscapes(
-            nil,                                // allocator
-            (CFStringRef)path,                  // <#CFStringRef originalString#>
-	    (CFStringRef)@"%#",                 // <#CFStringRef charactersToLeaveUnescaped#>
-	    nil,                                // <#CFStringRef legalURLCharactersToBeEscaped#>,
-	    kCFStringEncodingWindowsLatin1      //<#CFStringEncoding encoding#>
-        );
+        // Something is wrong, perhaps path is not well-formed. Try percent-
+        // escaping characters. It's not clear what encoding should be used,
+        // but for now let's just use Latin1.
+        CFStringRef str = CFURLCreateStringByAddingPercentEscapes(
+                                                                  nil,                                // allocator
+                                                                  (CFStringRef)path,                  // CFStringRef originalString
+                                                                  (CFStringRef)@"%#",                 // CFStringRef charactersToLeaveUnescaped
+                                                                  nil,                                // CFStringRef legalURLCharactersToBeEscaped,
+                                                                  kCFStringEncodingWindowsLatin1      //CFStringEncoding encoding
+                                                                  );
         
         url = [NSURL URLWithString:(NSString*)str relativeToURL:baseURL];
     }

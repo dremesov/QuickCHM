@@ -97,21 +97,21 @@
 #ifdef CHM_MT
 #ifdef WIN32
 #define CHM_ACQUIRE_LOCK(a) do {                        \
-        EnterCriticalSection(&(a));                     \
-    } while(0)
+EnterCriticalSection(&(a));                     \
+} while(0)
 #define CHM_RELEASE_LOCK(a) do {                        \
-        EnterCriticalSection(&(a));                     \
-    } while(0)
+EnterCriticalSection(&(a));                     \
+} while(0)
 
 #else
 #include <pthread.h>
 
 #define CHM_ACQUIRE_LOCK(a) do {                        \
-        pthread_mutex_lock(&(a));                       \
-    } while(0)
+pthread_mutex_lock(&(a));                       \
+} while(0)
 #define CHM_RELEASE_LOCK(a) do {                        \
-        pthread_mutex_unlock(&(a));                     \
-    } while(0)
+pthread_mutex_unlock(&(a));                     \
+} while(0)
 
 #endif
 #else
@@ -225,7 +225,7 @@ static int _unmarshal_uchar_array(unsigned char **pData,
                                   unsigned char *dest,
                                   int count)
 {
-        if (count <= 0  ||  (unsigned int)count > *pLenRemain)
+    if (count <= 0  ||  (unsigned int)count > *pLenRemain)
         return 0;
     memcpy(dest, (*pData), count);
     *pData += count;
@@ -330,15 +330,15 @@ static int _unmarshal_uuid(unsigned char **pData,
 
 /* names of sections essential to decompression */
 static const char _CHMU_RESET_TABLE[] =
-        "::DataSpace/Storage/MSCompressed/Transform/"
-        "{7FC28940-9D31-11D0-9B27-00A0C91E9C7C}/"
-        "InstanceData/ResetTable";
+"::DataSpace/Storage/MSCompressed/Transform/"
+"{7FC28940-9D31-11D0-9B27-00A0C91E9C7C}/"
+"InstanceData/ResetTable";
 static const char _CHMU_LZXC_CONTROLDATA[] =
-        "::DataSpace/Storage/MSCompressed/ControlData";
+"::DataSpace/Storage/MSCompressed/ControlData";
 static const char _CHMU_CONTENT[] =
-        "::DataSpace/Storage/MSCompressed/Content";
+"::DataSpace/Storage/MSCompressed/Content";
 static const char _CHMU_SPANINFO[] =
-        "::DataSpace/Storage/MSCompressed/SpanInfo";
+"::DataSpace/Storage/MSCompressed/SpanInfo";
 
 /*
  * structures local to this module
@@ -371,7 +371,7 @@ static int _unmarshal_itsf_header(unsigned char **pData,
     /* we only know how to deal with the 0x58 and 0x60 byte structures */
     if (*pDataLen != _CHM_ITSF_V2_LEN  &&  *pDataLen != _CHM_ITSF_V3_LEN)
         return 0;
-
+    
     /* unmarshal common fields */
     _unmarshal_char_array(pData, pDataLen,  dest->signature, 4);
     _unmarshal_int32     (pData, pDataLen, &dest->version);
@@ -385,7 +385,7 @@ static int _unmarshal_itsf_header(unsigned char **pData,
     _unmarshal_uint64    (pData, pDataLen, &dest->unknown_len);
     _unmarshal_uint64    (pData, pDataLen, &dest->dir_offset);
     _unmarshal_uint64    (pData, pDataLen, &dest->dir_len);
-
+    
     /* error check the data */
     /* XXX: should also check UUIDs, probably, though with a version 3 file,
      * current MS tools do not seem to use them.
@@ -404,7 +404,7 @@ static int _unmarshal_itsf_header(unsigned char **pData,
     }
     else
         return 0;
-
+    
     /* now, if we have a V3 structure, unmarshal the rest.
      * otherwise, compute it
      */
@@ -417,7 +417,7 @@ static int _unmarshal_itsf_header(unsigned char **pData,
     }
     else
         dest->data_offset = dest->dir_offset + dest->dir_len;
-
+    
     return 1;
 }
 
@@ -449,7 +449,7 @@ static int _unmarshal_itsp_header(unsigned char **pData,
     /* we only know how to deal with a 0x54 byte structures */
     if (*pDataLen != _CHM_ITSP_V1_LEN)
         return 0;
-
+    
     /* unmarshal fields */
     _unmarshal_char_array(pData, pDataLen,  dest->signature, 4);
     _unmarshal_int32     (pData, pDataLen, &dest->version);
@@ -466,7 +466,7 @@ static int _unmarshal_itsp_header(unsigned char **pData,
     _unmarshal_uint32    (pData, pDataLen, &dest->lang_id);
     _unmarshal_uuid      (pData, pDataLen,  dest->system_uuid);
     _unmarshal_uchar_array(pData, pDataLen, dest->unknown_0044, 16);
-
+    
     /* error check the data */
     if (memcmp(dest->signature, "ITSP", 4) != 0)
         return 0;
@@ -474,7 +474,7 @@ static int _unmarshal_itsp_header(unsigned char **pData,
         return 0;
     if (dest->header_len != _CHM_ITSP_V1_LEN)
         return 0;
-
+    
     return 1;
 }
 
@@ -497,18 +497,18 @@ static int _unmarshal_pmgl_header(unsigned char **pData,
     /* we only know how to deal with a 0x14 byte structures */
     if (*pDataLen != _CHM_PMGL_LEN)
         return 0;
-
+    
     /* unmarshal fields */
     _unmarshal_char_array(pData, pDataLen,  dest->signature, 4);
     _unmarshal_uint32    (pData, pDataLen, &dest->free_space);
     _unmarshal_uint32    (pData, pDataLen, &dest->unknown_0008);
     _unmarshal_int32     (pData, pDataLen, &dest->block_prev);
     _unmarshal_int32     (pData, pDataLen, &dest->block_next);
-
+    
     /* check structure */
     if (memcmp(dest->signature, _chm_pmgl_marker, 4) != 0)
         return 0;
-
+    
     return 1;
 }
 
@@ -528,15 +528,15 @@ static int _unmarshal_pmgi_header(unsigned char **pData,
     /* we only know how to deal with a 0x8 byte structures */
     if (*pDataLen != _CHM_PMGI_LEN)
         return 0;
-
+    
     /* unmarshal fields */
     _unmarshal_char_array(pData, pDataLen,  dest->signature, 4);
     _unmarshal_uint32    (pData, pDataLen, &dest->free_space);
-
+    
     /* check structure */
     if (memcmp(dest->signature, _chm_pmgi_marker, 4) != 0)
         return 0;
-
+    
     return 1;
 }
 
@@ -560,7 +560,7 @@ static int _unmarshal_lzxc_reset_table(unsigned char **pData,
     /* we only know how to deal with a 0x28 byte structures */
     if (*pDataLen != _CHM_LZXC_RESETTABLE_V1_LEN)
         return 0;
-
+    
     /* unmarshal fields */
     _unmarshal_uint32    (pData, pDataLen, &dest->version);
     _unmarshal_uint32    (pData, pDataLen, &dest->block_count);
@@ -569,11 +569,11 @@ static int _unmarshal_lzxc_reset_table(unsigned char **pData,
     _unmarshal_uint64    (pData, pDataLen, &dest->uncompressed_len);
     _unmarshal_uint64    (pData, pDataLen, &dest->compressed_len);
     _unmarshal_uint64    (pData, pDataLen, &dest->block_len);
-
+    
     /* check structure */
     if (dest->version != 2)
         return 0;
-
+    
     return 1;
 }
 
@@ -598,7 +598,7 @@ static int _unmarshal_lzxc_control_data(unsigned char **pData,
     /* we want at least 0x18 bytes */
     if (*pDataLen < _CHM_LZXC_MIN_LEN)
         return 0;
-
+    
     /* unmarshal fields */
     _unmarshal_uint32    (pData, pDataLen, &dest->size);
     _unmarshal_char_array(pData, pDataLen,  dest->signature, 4);
@@ -606,12 +606,12 @@ static int _unmarshal_lzxc_control_data(unsigned char **pData,
     _unmarshal_uint32    (pData, pDataLen, &dest->resetInterval);
     _unmarshal_uint32    (pData, pDataLen, &dest->windowSize);
     _unmarshal_uint32    (pData, pDataLen, &dest->windowsPerReset);
-
+    
     if (*pDataLen >= _CHM_LZXC_V2_LEN)
         _unmarshal_uint32    (pData, pDataLen, &dest->unknown_18);
     else
         dest->unknown_18 = 0;
-
+    
     if (dest->version == 2)
     {
         dest->resetInterval *= 0x8000;
@@ -619,17 +619,17 @@ static int _unmarshal_lzxc_control_data(unsigned char **pData,
     }
     if (dest->windowSize == 0  ||  dest->resetInterval == 0)
         return 0;
-
+    
     /* for now, only support resetInterval a multiple of windowSize/2 */
     if (dest->windowSize == 1)
         return 0;
     if ((dest->resetInterval % (dest->windowSize/2)) != 0)
         return 0;
-
+    
     /* check structure */
     if (memcmp(dest->signature, "LZXC", 4) != 0)
         return 0;
-
+    
     return 1;
 }
 
@@ -641,7 +641,7 @@ struct chmFile
 #else
     int                 fd;
 #endif
-
+    
 #ifdef CHM_MT
 #ifdef WIN32
     CRITICAL_SECTION    mutex;
@@ -653,29 +653,29 @@ struct chmFile
     pthread_mutex_t     cache_mutex;
 #endif
 #endif
-
+    
     UInt64              dir_offset;
     UInt64              dir_len;
     UInt64              data_offset;
     Int32               index_root;
     Int32               index_head;
     UInt32              block_len;
-
+    
     UInt64              span;
     struct chmUnitInfo  rt_unit;
     struct chmUnitInfo  cn_unit;
     struct chmLzxcResetTable reset_table;
-
+    
     /* LZX control data */
     int                 compression_enabled;
     UInt32              window_size;
     UInt32              reset_interval;
     UInt32              reset_blkcount;
-
+    
     /* decompressor state */
     struct LZXstate    *lzx_state;
     int                 lzx_last_block;
-
+    
     /* cache for decompressed blocks */
     UChar             **cache_blocks;
     UInt64             *cache_block_indices;
@@ -695,7 +695,7 @@ static Int64 _chm_fetch_bytes(struct chmFile *h,
     Int64 readLen=0;
     if (h->fd  ==  CHM_NULL_FD)
         return readLen;
-
+    
     CHM_ACQUIRE_LOCK(h->mutex);
 #ifdef CHM_USE_WIN32IO
     /* NOTE: this might be better done with CreateFileMapping, et cetera... */
@@ -703,13 +703,13 @@ static Int64 _chm_fetch_bytes(struct chmFile *h,
         DWORD origOffsetLo=0, origOffsetHi=0;
         DWORD offsetLo, offsetHi;
         DWORD actualLen=0;
-
+        
         /* awkward Win32 Seek/Tell */
         offsetLo = (unsigned int)(os & 0xffffffffL);
         offsetHi = (unsigned int)((os >> 32) & 0xffffffffL);
         origOffsetLo = SetFilePointer(h->fd, 0, &origOffsetHi, FILE_CURRENT);
         offsetLo = SetFilePointer(h->fd, offsetLo, &offsetHi, FILE_BEGIN);
-
+        
         /* read the data */
         if (ReadFile(h->fd,
                      buf,
@@ -719,7 +719,7 @@ static Int64 _chm_fetch_bytes(struct chmFile *h,
             readLen = actualLen;
         else
             readLen = 0;
-
+        
         /* restore original position */
         SetFilePointer(h->fd, origOffsetLo, &origOffsetHi, FILE_BEGIN);
     }
@@ -764,7 +764,7 @@ struct chmFile *chm_open(const char *filename)
     struct chmItspHeader        itspHeader;
     struct chmUnitInfo          uiLzxc;
     struct chmLzxcControlData   ctlData;
-
+    
     /* allocate handle */
     newHandle = (struct chmFile *)malloc(sizeof(struct chmFile));
     newHandle->fd = CHM_NULL_FD;
@@ -772,7 +772,7 @@ struct chmFile *chm_open(const char *filename)
     newHandle->cache_blocks = NULL;
     newHandle->cache_block_indices = NULL;
     newHandle->cache_num_blocks = 0;
-
+    
     /* open file */
 #ifdef WIN32
 #ifdef PPC_BSTR
@@ -807,7 +807,7 @@ struct chmFile *chm_open(const char *filename)
         return NULL;
     }
 #endif
-
+    
     /* initialize mutexes, if needed */
 #ifdef CHM_MT
 #ifdef WIN32
@@ -820,7 +820,7 @@ struct chmFile *chm_open(const char *filename)
     pthread_mutex_init(&newHandle->cache_mutex, NULL);
 #endif
 #endif
-
+    
     /* read and verify header */
     sremain = _CHM_ITSF_V3_LEN;
     sbufpos = sbuffer;
@@ -830,12 +830,12 @@ struct chmFile *chm_open(const char *filename)
         chm_close(newHandle);
         return NULL;
     }
-
+    
     /* stash important values from header */
     newHandle->dir_offset  = itsfHeader.dir_offset;
     newHandle->dir_len     = itsfHeader.dir_len;
     newHandle->data_offset = itsfHeader.data_offset;
-
+    
     /* now, read and verify the directory header chunk */
     sremain = _CHM_ITSP_V1_LEN;
     sbufpos = sbuffer;
@@ -846,24 +846,24 @@ struct chmFile *chm_open(const char *filename)
         chm_close(newHandle);
         return NULL;
     }
-
+    
     /* grab essential information from ITSP header */
     newHandle->dir_offset += itspHeader.header_len;
     newHandle->dir_len    -= itspHeader.header_len;
     newHandle->index_root  = itspHeader.index_root;
     newHandle->index_head  = itspHeader.index_head;
     newHandle->block_len   = itspHeader.block_len;
-
+    
     /* if the index root is -1, this means we don't have any PMGI blocks.
      * as a result, we must use the sole PMGL block as the index root
      */
     if (newHandle->index_root == -1)
         newHandle->index_root = newHandle->index_head;
-
+    
     /* By default, compression is enabled. */
     newHandle->compression_enabled = 1;
-
-/* Jed, Sun Jun 27: 'span' doesn't seem to be used anywhere?! */
+    
+    /* Jed, Sun Jun 27: 'span' doesn't seem to be used anywhere?! */
 #if 0
     /* fetch span */
     if (CHM_RESOLVE_SUCCESS != chm_resolve_object(newHandle,
@@ -874,7 +874,7 @@ struct chmFile *chm_open(const char *filename)
         chm_close(newHandle);
         return NULL;
     }
-
+    
     /* N.B.: we've already checked that uiSpan is in the uncompressed section,
      *       so this should not require attempting to decompress, which may
      *       rely on having a valid "span"
@@ -889,7 +889,7 @@ struct chmFile *chm_open(const char *filename)
         return NULL;
     }
 #endif
-
+    
     /* prefetch most commonly needed unit infos */
     if (CHM_RESOLVE_SUCCESS != chm_resolve_object(newHandle,
                                                   _CHMU_RESET_TABLE,
@@ -906,7 +906,7 @@ struct chmFile *chm_open(const char *filename)
     {
         newHandle->compression_enabled = 0;
     }
-
+    
     /* read reset table info */
     if (newHandle->compression_enabled)
     {
@@ -920,7 +920,7 @@ struct chmFile *chm_open(const char *filename)
             newHandle->compression_enabled = 0;
         }
     }
-
+    
     /* read control data */
     if (newHandle->compression_enabled)
     {
@@ -930,7 +930,7 @@ struct chmFile *chm_open(const char *filename)
             chm_close(newHandle);
             return NULL;
         }
-
+        
         sbufpos = sbuffer;
         if (chm_retrieve_object(newHandle, &uiLzxc, sbuffer,
                                 0, sremain) != sremain                       ||
@@ -939,27 +939,27 @@ struct chmFile *chm_open(const char *filename)
         {
             newHandle->compression_enabled = 0;
         }
-
+        
         newHandle->window_size = ctlData.windowSize;
         newHandle->reset_interval = ctlData.resetInterval;
-
-/* Jed, Mon Jun 28: Experimentally, it appears that the reset block count */
-/*       must be multiplied by this formerly unknown ctrl data field in   */
-/*       order to decompress some files.                                  */
+        
+        /* Jed, Mon Jun 28: Experimentally, it appears that the reset block count */
+        /*       must be multiplied by this formerly unknown ctrl data field in   */
+        /*       order to decompress some files.                                  */
 #if 0
         newHandle->reset_blkcount = newHandle->reset_interval /
-                    (newHandle->window_size / 2);
+        (newHandle->window_size / 2);
 #else
         newHandle->reset_blkcount = newHandle->reset_interval    /
-                                    (newHandle->window_size / 2) *
-                                    ctlData.windowsPerReset;
+        (newHandle->window_size / 2) *
+        ctlData.windowsPerReset;
 #endif
     }
-
+    
     /* initialize cache */
     chm_set_param(newHandle, CHM_PARAM_MAX_BLOCKS_CACHED,
                   CHM_MAX_BLOCKS_CACHED);
-
+    
     return newHandle;
 }
 
@@ -971,7 +971,7 @@ void chm_close(struct chmFile *h)
         if (h->fd != CHM_NULL_FD)
             CHM_CLOSE_FILE(h->fd);
         h->fd = CHM_NULL_FD;
-
+        
 #ifdef CHM_MT
 #ifdef WIN32
         DeleteCriticalSection(&h->mutex);
@@ -983,11 +983,11 @@ void chm_close(struct chmFile *h)
         pthread_mutex_destroy(&h->cache_mutex);
 #endif
 #endif
-
+        
         if (h->lzx_state)
             LZXteardown(h->lzx_state);
         h->lzx_state = NULL;
-
+        
         if (h->cache_blocks)
         {
             int i;
@@ -999,11 +999,11 @@ void chm_close(struct chmFile *h)
             free(h->cache_blocks);
             h->cache_blocks = NULL;
         }
-
+        
         if (h->cache_block_indices)
             free(h->cache_block_indices);
         h->cache_block_indices = NULL;
-
+        
         free(h);
     }
 }
@@ -1030,7 +1030,7 @@ void chm_set_param(struct chmFile *h,
                 UChar **newBlocks;
                 UInt64 *newIndices;
                 int     i;
-
+                
                 /* allocate new cached blocks */
                 newBlocks = (UChar **)malloc(paramVal * sizeof (UChar *));
                 newIndices = (UInt64 *)malloc(paramVal * sizeof (UInt64));
@@ -1039,14 +1039,14 @@ void chm_set_param(struct chmFile *h,
                     newBlocks[i] = NULL;
                     newIndices[i] = 0;
                 }
-
+                
                 /* re-distribute old cached blocks */
                 if (h->cache_blocks)
                 {
                     for (i=0; i<h->cache_num_blocks; i++)
                     {
                         int newSlot = (int)(h->cache_block_indices[i] % paramVal);
-
+                        
                         if (h->cache_blocks[i])
                         {
                             /* in case of collision, destroy newcomer */
@@ -1059,15 +1059,15 @@ void chm_set_param(struct chmFile *h,
                             {
                                 newBlocks[newSlot] = h->cache_blocks[i];
                                 newIndices[newSlot] =
-                                            h->cache_block_indices[i];
+                                h->cache_block_indices[i];
                             }
                         }
                     }
-
+                    
                     free(h->cache_blocks);
                     free(h->cache_block_indices);
                 }
-
+                
                 /* now, set new values */
                 h->cache_blocks = newBlocks;
                 h->cache_block_indices = newIndices;
@@ -1075,7 +1075,7 @@ void chm_set_param(struct chmFile *h,
             }
             CHM_RELEASE_LOCK(h->cache_mutex);
             break;
-
+            
         default:
             break;
     }
@@ -1110,7 +1110,7 @@ static UInt64 _chm_parse_cword(UChar **pEntry)
         accum <<= 7;
         accum += temp & 0x7f;
     }
-
+    
     return (accum << 7) + temp;
 }
 
@@ -1128,7 +1128,7 @@ static int _chm_parse_UTF8(UChar **pEntry, UInt64 count, char *path)
         *path++ = (char)(*(*pEntry)++);
         --count;
     }
-
+    
     *path = '\0';
     return 1;
 }
@@ -1137,16 +1137,16 @@ static int _chm_parse_UTF8(UChar **pEntry, UInt64 count, char *path)
 static int _chm_parse_PMGL_entry(UChar **pEntry, struct chmUnitInfo *ui)
 {
     UInt64 strLen;
-
+    
     /* parse str len */
     strLen = _chm_parse_cword(pEntry);
     if (strLen > CHM_MAX_PATHLEN)
         return 0;
-
+    
     /* parse path */
     if (! _chm_parse_UTF8(pEntry, strLen, ui->path))
         return 0;
-
+    
     /* parse info */
     ui->space  = (int)_chm_parse_cword(pEntry);
     ui->start  = _chm_parse_cword(pEntry);
@@ -1156,8 +1156,8 @@ static int _chm_parse_PMGL_entry(UChar **pEntry, struct chmUnitInfo *ui)
 
 /* find an exact entry in PMGL; return NULL if we fail */
 static UChar *_chm_find_in_PMGL(UChar *page_buf,
-                         UInt32 block_len,
-                         const char *objPath)
+                                UInt32 block_len,
+                                const char *objPath)
 {
     /* XXX: modify this to do a binary search using the nice index structure
      *      that is provided for us.
@@ -1169,14 +1169,14 @@ static UChar *_chm_find_in_PMGL(UChar *page_buf,
     UChar *temp;
     UInt64 strLen;
     char buffer[CHM_MAX_PATHLEN+1];
-
+    
     /* figure out where to start and end */
     cur = page_buf;
     hremain = _CHM_PMGL_LEN;
     if (! _unmarshal_pmgl_header(&cur, &hremain, &header))
         return NULL;
     end = page_buf + block_len - (header.free_space);
-
+    
     /* now, scan progressively */
     while (cur < end)
     {
@@ -1187,21 +1187,21 @@ static UChar *_chm_find_in_PMGL(UChar *page_buf,
             return NULL;
         if (! _chm_parse_UTF8(&cur, strLen, buffer))
             return NULL;
-
+        
         /* check if it is the right name */
         if (! strcasecmp(buffer, objPath))
             return temp;
-
+        
         _chm_skip_PMGL_entry_data(&cur);
     }
-
+    
     return NULL;
 }
 
 /* find which block should be searched next for the entry; -1 if no block */
 static Int32 _chm_find_in_PMGI(UChar *page_buf,
-                        UInt32 block_len,
-                        const char *objPath)
+                               UInt32 block_len,
+                               const char *objPath)
 {
     /* XXX: modify this to do a binary search using the nice index structure
      *      that is provided for us
@@ -1213,14 +1213,14 @@ static Int32 _chm_find_in_PMGI(UChar *page_buf,
     UChar *cur;
     UInt64 strLen;
     char buffer[CHM_MAX_PATHLEN+1];
-
+    
     /* figure out where to start and end */
     cur = page_buf;
     hremain = _CHM_PMGI_LEN;
     if (! _unmarshal_pmgi_header(&cur, &hremain, &header))
         return -1;
     end = page_buf + block_len - (header.free_space);
-
+    
     /* now, scan progressively */
     while (cur < end)
     {
@@ -1230,15 +1230,15 @@ static Int32 _chm_find_in_PMGI(UChar *page_buf,
             return -1;
         if (! _chm_parse_UTF8(&cur, strLen, buffer))
             return -1;
-
+        
         /* check if it is the right name */
         if (strcasecmp(buffer, objPath) > 0)
             return page;
-
+        
         /* load next value for path */
         page = (int)_chm_parse_cword(&cur);
     }
-
+    
     return page;
 }
 
@@ -1250,9 +1250,9 @@ int chm_resolve_object(struct chmFile *h,
     /*
      * XXX: implement caching scheme for dir pages
      */
-
+    
     Int32 curPage;
-
+    
     /* buffer to hold whatever page we're looking at */
 #ifdef WIN32
 #ifdef _WIN32_WCE
@@ -1264,14 +1264,14 @@ int chm_resolve_object(struct chmFile *h,
 #else
     UChar page_buf[h->block_len];
 #endif
-
+    
     /* starting page */
     curPage = h->index_root;
-
+    
     /* until we have either returned or given up */
     while (curPage != -1)
     {
-
+        
         /* try to fetch the index page */
         if (_chm_fetch_bytes(h, page_buf,
                              (UInt64)h->dir_offset + (UInt64)curPage*h->block_len,
@@ -1280,7 +1280,7 @@ int chm_resolve_object(struct chmFile *h,
             FREEBUF(page_buf);
             return CHM_RESOLVE_FAILURE;
         }
-
+        
         /* now, if it is a leaf node: */
         if (memcmp(page_buf, _chm_pmgl_marker, 4) == 0)
         {
@@ -1293,17 +1293,17 @@ int chm_resolve_object(struct chmFile *h,
                 FREEBUF(page_buf);
                 return CHM_RESOLVE_FAILURE;
             }
-
+            
             /* parse entry and return */
             _chm_parse_PMGL_entry(&pEntry, ui);
             FREEBUF(page_buf);
             return CHM_RESOLVE_SUCCESS;
         }
-
+        
         /* else, if it is a branch node: */
         else if (memcmp(page_buf, _chm_pmgi_marker, 4) == 0)
             curPage = _chm_find_in_PMGI(page_buf, h->block_len, objPath);
-
+        
         /* else, we are confused.  give up. */
         else
         {
@@ -1311,7 +1311,7 @@ int chm_resolve_object(struct chmFile *h,
             return CHM_RESOLVE_FAILURE;
         }
     }
-
+    
     /* didn't find anything.  fail. */
     FREEBUF(page_buf);
     return CHM_RESOLVE_FAILURE;
@@ -1323,13 +1323,13 @@ int chm_resolve_object(struct chmFile *h,
 
 /* get the bounds of a compressed block.  return 0 on failure */
 static int _chm_get_cmpblock_bounds(struct chmFile *h,
-                             UInt64 block,
-                             UInt64 *start,
-                             Int64 *len)
+                                    UInt64 block,
+                                    UInt64 *start,
+                                    Int64 *len)
 {
     UChar buffer[8], *dummy;
     unsigned int remain;
-
+    
     /* for all but the last block, use the reset table */
     if (block < h->reset_table.block_count-1)
     {
@@ -1338,26 +1338,26 @@ static int _chm_get_cmpblock_bounds(struct chmFile *h,
         remain = 8;
         if (_chm_fetch_bytes(h, buffer,
                              (UInt64)h->data_offset
-                                + (UInt64)h->rt_unit.start
-                                + (UInt64)h->reset_table.table_offset
-                                + (UInt64)block*8,
+                             + (UInt64)h->rt_unit.start
+                             + (UInt64)h->reset_table.table_offset
+                             + (UInt64)block*8,
                              remain) != remain                            ||
             !_unmarshal_uint64(&dummy, &remain, start))
             return 0;
-
+        
         /* unpack the end address */
         dummy = buffer;
         remain = 8;
         if (_chm_fetch_bytes(h, buffer,
-                         (UInt64)h->data_offset
-                                + (UInt64)h->rt_unit.start
-                                + (UInt64)h->reset_table.table_offset
-                                + (UInt64)block*8 + 8,
-                         remain) != remain                                ||
+                             (UInt64)h->data_offset
+                             + (UInt64)h->rt_unit.start
+                             + (UInt64)h->reset_table.table_offset
+                             + (UInt64)block*8 + 8,
+                             remain) != remain                                ||
             !_unmarshal_int64(&dummy, &remain, len))
             return 0;
     }
-
+    
     /* for the last block, use the span in addition to the reset table */
     else
     {
@@ -1366,20 +1366,20 @@ static int _chm_get_cmpblock_bounds(struct chmFile *h,
         remain = 8;
         if (_chm_fetch_bytes(h, buffer,
                              (UInt64)h->data_offset
-                                + (UInt64)h->rt_unit.start
-                                + (UInt64)h->reset_table.table_offset
-                                + (UInt64)block*8,
+                             + (UInt64)h->rt_unit.start
+                             + (UInt64)h->reset_table.table_offset
+                             + (UInt64)block*8,
                              remain) != remain                            ||
             !_unmarshal_uint64(&dummy, &remain, start))
             return 0;
-
+        
         *len = h->reset_table.compressed_len;
     }
-
+    
     /* compute the length and absolute start address */
     *len -= *start;
     *start += h->data_offset + h->cn_unit.start;
-
+    
     return 1;
 }
 
@@ -1404,12 +1404,12 @@ static Int64 _chm_decompress_block(struct chmFile *h,
     UChar *lbuffer;                                     /* local buffer ptr  */
     UInt32 blockAlign = (UInt32)(block % h->reset_blkcount); /* reset intvl. aln. */
     UInt32 i;                                           /* local loop index  */
-
+    
     /* let the caching system pull its weight! */
     if (block - blockAlign <= h->lzx_last_block  &&
         block              >= h->lzx_last_block)
         blockAlign = (block - h->lzx_last_block);
-
+    
     /* check if we need previous blocks */
     if (blockAlign != 0)
     {
@@ -1417,7 +1417,7 @@ static Int64 _chm_decompress_block(struct chmFile *h,
         for (i = blockAlign; i > 0; i--)
         {
             UInt32 curBlockIdx = block - i;
-
+            
             /* check if we most recently decompressed the previous block */
             if (h->lzx_last_block != curBlockIdx)
             {
@@ -1428,14 +1428,14 @@ static Int64 _chm_decompress_block(struct chmFile *h,
 #endif
                     LZXreset(h->lzx_state);
                 }
-
+                
                 indexSlot = (int)((curBlockIdx) % h->cache_num_blocks);
                 h->cache_block_indices[indexSlot] = curBlockIdx;
                 if (! h->cache_blocks[indexSlot])
                     h->cache_blocks[indexSlot] = (UChar *)malloc(
                                                                  (unsigned int)(h->reset_table.block_len));
                 lbuffer = h->cache_blocks[indexSlot];
-
+                
                 /* decompress the previous block */
 #ifdef CHM_DEBUG
                 fprintf(stderr, "Decompressing block #%4d (EXTRA)\n", curBlockIdx);
@@ -1451,7 +1451,7 @@ static Int64 _chm_decompress_block(struct chmFile *h,
                     FREEBUF(cbuffer);
                     return (Int64)0;
                 }
-
+                
                 h->lzx_last_block = (int)curBlockIdx;
             }
         }
@@ -1466,16 +1466,16 @@ static Int64 _chm_decompress_block(struct chmFile *h,
             LZXreset(h->lzx_state);
         }
     }
-
+    
     /* allocate slot in cache */
     indexSlot = (int)(block % h->cache_num_blocks);
     h->cache_block_indices[indexSlot] = block;
     if (! h->cache_blocks[indexSlot])
         h->cache_blocks[indexSlot] = (UChar *)malloc(
-                                          ((unsigned int)h->reset_table.block_len));
+                                                     ((unsigned int)h->reset_table.block_len));
     lbuffer = h->cache_blocks[indexSlot];
     *ubuffer = lbuffer;
-
+    
     /* decompress the block we actually want */
 #ifdef CHM_DEBUG
     fprintf(stderr, "Decompressing block #%4d (REAL )\n", block);
@@ -1492,7 +1492,7 @@ static Int64 _chm_decompress_block(struct chmFile *h,
         return (Int64)0;
     }
     h->lzx_last_block = (int)block;
-
+    
     /* XXX: modify LZX routines to return the length of the data they
      * decompressed and return that instead, for an extra sanity check.
      */
@@ -1510,17 +1510,17 @@ static Int64 _chm_decompress_region(struct chmFile *h,
     UInt64 nLen;
     UInt64 gotLen;
     UChar *ubuffer;
-
-        if (len <= 0)
-                return (Int64)0;
-
+    
+    if (len <= 0)
+        return (Int64)0;
+    
     /* figure out what we need to read */
     nBlock = start / h->reset_table.block_len;
     nOffset = start % h->reset_table.block_len;
     nLen = len;
     if (nLen > (h->reset_table.block_len - nOffset))
         nLen = h->reset_table.block_len - nOffset;
-
+    
     /* if block is cached, return data from it. */
     CHM_ACQUIRE_LOCK(h->lzx_mutex);
     CHM_ACQUIRE_LOCK(h->cache_mutex);
@@ -1535,7 +1535,7 @@ static Int64 _chm_decompress_region(struct chmFile *h,
         return nLen;
     }
     CHM_RELEASE_LOCK(h->cache_mutex);
-
+    
     /* data request not satisfied, so... start up the decompressor machine */
     if (! h->lzx_state)
     {
@@ -1543,7 +1543,7 @@ static Int64 _chm_decompress_region(struct chmFile *h,
         h->lzx_last_block = -1;
         h->lzx_state = LZXinit(window_size);
     }
-
+    
     /* decompress some data */
     gotLen = _chm_decompress_block(h, nBlock, &ubuffer);
     if (gotLen < nLen)
@@ -1555,23 +1555,23 @@ static Int64 _chm_decompress_region(struct chmFile *h,
 
 /* retrieve (part of) an object */
 LONGINT64 chm_retrieve_object(struct chmFile *h,
-                               struct chmUnitInfo *ui,
-                               unsigned char *buf,
-                               LONGUINT64 addr,
-                               LONGINT64 len)
+                              struct chmUnitInfo *ui,
+                              unsigned char *buf,
+                              LONGUINT64 addr,
+                              LONGINT64 len)
 {
     /* must be valid file handle */
     if (h == NULL)
         return (Int64)0;
-
+    
     /* starting address must be in correct range */
     if (addr >= ui->length)
         return (Int64)0;
-
+    
     /* clip length */
     if (addr + len > ui->length)
         len = ui->length - addr;
-
+    
     /* if the file is uncompressed, it's simple */
     if (ui->space == CHM_UNCOMPRESSED)
     {
@@ -1581,33 +1581,33 @@ LONGINT64 chm_retrieve_object(struct chmFile *h,
                                 (UInt64)h->data_offset + (UInt64)ui->start + (UInt64)addr,
                                 len);
     }
-
+    
     /* else if the file is compressed, it's a little trickier */
     else /* ui->space == CHM_COMPRESSED */
     {
         Int64 swath=0, total=0;
-
+        
         /* if compression is not enabled for this file... */
         if (! h->compression_enabled)
             return total;
-
+        
         do {
-
+            
             /* swill another mouthful */
             swath = _chm_decompress_region(h, buf, ui->start + addr, len);
-
+            
             /* if we didn't get any... */
             if (swath == 0)
                 return total;
-
+            
             /* update stats */
             total += swath;
             len -= swath;
             addr += swath;
             buf += swath;
-
+            
         } while (len != 0);
-
+        
         return total;
     }
 }
@@ -1619,7 +1619,7 @@ int chm_enumerate(struct chmFile *h,
                   void *context)
 {
     Int32 curPage;
-
+    
     /* buffer to hold whatever page we're looking at */
 #ifdef WIN32
 #ifdef _WIN32_WCE
@@ -1636,19 +1636,19 @@ int chm_enumerate(struct chmFile *h,
     UChar *cur;
     unsigned int lenRemain;
     UInt64 ui_path_len;
-
+    
     /* the current ui */
     struct chmUnitInfo ui;
     int type_bits = (what & 0x7);
     int filter_bits = (what & 0xF8);
-
+    
     /* starting page */
     curPage = h->index_head;
-
+    
     /* until we have either returned or given up */
     while (curPage != -1)
     {
-
+        
         /* try to fetch the index page */
         if (_chm_fetch_bytes(h,
                              page_buf,
@@ -1658,7 +1658,7 @@ int chm_enumerate(struct chmFile *h,
             FREEBUF(page_buf);
             return 0;
         }
-
+        
         /* figure out start and end for this page */
         cur = page_buf;
         lenRemain = _CHM_PMGL_LEN;
@@ -1668,33 +1668,33 @@ int chm_enumerate(struct chmFile *h,
             return 0;
         }
         end = page_buf + h->block_len - (header.free_space);
-
+        
         /* loop over this page */
         while (cur < end)
         {
             ui.flags = 0;
-
+            
             if (! _chm_parse_PMGL_entry(&cur, &ui))
             {
                 FREEBUF(page_buf);
                 return 0;
             }
-
+            
             /* get the length of the path */
             ui_path_len = strlen(ui.path)-1;
-
+            
             /* check for DIRS */
             if (ui.path[ui_path_len] == '/')
                 ui.flags |= CHM_ENUMERATE_DIRS;
-
+            
             /* check for FILES */
             if (ui.path[ui_path_len] != '/')
                 ui.flags |= CHM_ENUMERATE_FILES;
-
+            
             /* check for NORMAL vs. META */
             if (ui.path[0] == '/')
             {
-
+                
                 /* check for NORMAL vs. SPECIAL */
                 if (ui.path[1] == '#'  ||  ui.path[1] == '$')
                     ui.flags |= CHM_ENUMERATE_SPECIAL;
@@ -1703,13 +1703,13 @@ int chm_enumerate(struct chmFile *h,
             }
             else
                 ui.flags |= CHM_ENUMERATE_META;
-
+            
             if (! (type_bits & ui.flags))
                 continue;
-
+            
             if (filter_bits && ! (filter_bits & ui.flags))
                 continue;
-
+            
             /* call the enumerator */
             {
                 int status = (*e)(h, &ui, context);
@@ -1728,11 +1728,11 @@ int chm_enumerate(struct chmFile *h,
                 }
             }
         }
-
+        
         /* advance to next page */
         curPage = header.block_next;
     }
-
+    
     FREEBUF(page_buf);
     return 1;
 }
@@ -1746,9 +1746,9 @@ int chm_enumerate_dir(struct chmFile *h,
     /*
      * XXX: do this efficiently (i.e. using the tree index)
      */
-
+    
     Int32 curPage;
-
+    
     /* buffer to hold whatever page we're looking at */
 #ifdef WIN32
 #ifdef _WIN32_WCE
@@ -1764,25 +1764,25 @@ int chm_enumerate_dir(struct chmFile *h,
     UChar *end;
     UChar *cur;
     unsigned int lenRemain;
-
+    
     /* set to 1 once we've started */
     int it_has_begun=0;
-
+    
     /* the current ui */
     struct chmUnitInfo ui;
     int type_bits = (what & 0x7);
     int filter_bits = (what & 0xF8);
     UInt64 ui_path_len;
-
+    
     /* the length of the prefix */
     char prefixRectified[CHM_MAX_PATHLEN+1];
     int prefixLen;
     char lastPath[CHM_MAX_PATHLEN+1];
     int lastPathLen;
-
+    
     /* starting page */
     curPage = h->index_head;
-
+    
     /* initialize pathname state */
     strncpy(prefixRectified, prefix, CHM_MAX_PATHLEN);
     prefixRectified[CHM_MAX_PATHLEN] = '\0';
@@ -1798,11 +1798,11 @@ int chm_enumerate_dir(struct chmFile *h,
     }
     lastPath[0] = '\0';
     lastPathLen = -1;
-
+    
     /* until we have either returned or given up */
     while (curPage != -1)
     {
-
+        
         /* try to fetch the index page */
         if (_chm_fetch_bytes(h,
                              page_buf,
@@ -1812,7 +1812,7 @@ int chm_enumerate_dir(struct chmFile *h,
             FREEBUF(page_buf);
             return 0;
         }
-
+        
         /* figure out start and end for this page */
         cur = page_buf;
         lenRemain = _CHM_PMGL_LEN;
@@ -1822,18 +1822,18 @@ int chm_enumerate_dir(struct chmFile *h,
             return 0;
         }
         end = page_buf + h->block_len - (header.free_space);
-
+        
         /* loop over this page */
         while (cur < end)
         {
             ui.flags = 0;
-
+            
             if (! _chm_parse_PMGL_entry(&cur, &ui))
             {
                 FREEBUF(page_buf);
                 return 0;
             }
-
+            
             /* check if we should start */
             if (! it_has_begun)
             {
@@ -1841,11 +1841,11 @@ int chm_enumerate_dir(struct chmFile *h,
                     it_has_begun = 1;
                 else
                     continue;
-
+                
                 if (ui.path[prefixLen] == '\0')
                     continue;
             }
-
+            
             /* check if we should stop */
             else
             {
@@ -1855,7 +1855,7 @@ int chm_enumerate_dir(struct chmFile *h,
                     return 1;
                 }
             }
-
+            
             /* check if we should include this path */
             if (lastPathLen != -1)
             {
@@ -1865,22 +1865,22 @@ int chm_enumerate_dir(struct chmFile *h,
             strncpy(lastPath, ui.path, CHM_MAX_PATHLEN);
             lastPath[CHM_MAX_PATHLEN] = '\0';
             lastPathLen = strlen(lastPath);
-
+            
             /* get the length of the path */
             ui_path_len = strlen(ui.path)-1;
-
+            
             /* check for DIRS */
             if (ui.path[ui_path_len] == '/')
                 ui.flags |= CHM_ENUMERATE_DIRS;
-
+            
             /* check for FILES */
             if (ui.path[ui_path_len] != '/')
                 ui.flags |= CHM_ENUMERATE_FILES;
-
+            
             /* check for NORMAL vs. META */
             if (ui.path[0] == '/')
             {
-
+                
                 /* check for NORMAL vs. SPECIAL */
                 if (ui.path[1] == '#'  ||  ui.path[1] == '$')
                     ui.flags |= CHM_ENUMERATE_SPECIAL;
@@ -1889,13 +1889,13 @@ int chm_enumerate_dir(struct chmFile *h,
             }
             else
                 ui.flags |= CHM_ENUMERATE_META;
-
+            
             if (! (type_bits & ui.flags))
                 continue;
-
+            
             if (filter_bits && ! (filter_bits & ui.flags))
                 continue;
-
+            
             /* call the enumerator */
             {
                 int status = (*e)(h, &ui, context);
@@ -1914,11 +1914,11 @@ int chm_enumerate_dir(struct chmFile *h,
                 }
             }
         }
-
+        
         /* advance to next page */
         curPage = header.block_next;
     }
-
+    
     FREEBUF(page_buf);
     return 1;
 }

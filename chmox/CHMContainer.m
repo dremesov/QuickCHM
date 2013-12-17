@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with Foobar; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -38,18 +38,18 @@
 - (id)initWithContentsOfFile:(NSString *)chmFilePath
 {
     if( self = [super init] ) {
-	_handle = chm_open( [chmFilePath fileSystemRepresentation] );
-	if( !_handle ) return nil;
-	
-	_path = [chmFilePath retain];
-	
-	_uniqueId = nil;
-	_title = nil;
-	_homePath = nil;
-	_tocPath = nil;
-	_indexPath = nil;
-
-	[self loadMetadata];
+        _handle = chm_open( [chmFilePath fileSystemRepresentation] );
+        if( !_handle ) return nil;
+        
+        _path = [chmFilePath retain];
+        
+        _uniqueId = nil;
+        _title = nil;
+        _homePath = nil;
+        _tocPath = nil;
+        _indexPath = nil;
+        
+        [self loadMetadata];
     }
     
     return self;
@@ -60,11 +60,11 @@
 {
     NSLog(@"deallocating %@",self);
     [_path release];
-
+    
     if( _handle ) {
         chm_close( _handle );
     }
-
+    
     [_uniqueId release];
     [_title release];
     [_homePath release];
@@ -87,7 +87,7 @@
     return _title;
 }
 
-- (NSString *)uniqueId 
+- (NSString *)uniqueId
 {
     return _uniqueId;
 }
@@ -133,25 +133,25 @@ static inline NSString * readTrimmedString( NSData *data, unsigned long offset )
     if( chm_resolve_object( _handle, [path UTF8String], &info ) != CHM_RESOLVE_SUCCESS ) {
         return NO;
     }
-
+    
     return YES;
 }
 
 - (NSData *)dataWithContentsOfObject: (NSString *)path
 {
-    //NSLog( @"dataWithContentsOfObject: %@", path );
+//    NSLog( @"dataWithContentsOfObject: %@", path );
     if( !path ) {
-	return nil;
+        return nil;
     }
     
     if( [path hasPrefix:@"/"] ) {
-	// Quick fix
-	if( [path hasPrefix:@"///"] ) {
-	    path = [path substringFromIndex:2];
-	}
+        // Quick fix
+        if( [path hasPrefix:@"///"] ) {
+            path = [path substringFromIndex:2];
+        }
     }
     else {
-	path = [NSString stringWithFormat:@"/%@", path];
+        path = [NSString stringWithFormat:@"/%@", path];
     }
     
     struct chmUnitInfo info;
@@ -165,15 +165,15 @@ static inline NSString * readTrimmedString( NSData *data, unsigned long offset )
     void *buffer = malloc( info.length );
     
     if( !buffer ) {
-	// Allocation failed
-	NSLog( @"Failed to allocate %qu bytes for %@", (long long)info.length, path );
-	return nil;
+        // Allocation failed
+        NSLog( @"Failed to allocate %qu bytes for %@", (long long)info.length, path );
+        return nil;
     }
     
     if( !chm_retrieve_object( _handle, &info, buffer, 0, info.length ) ) {
-	NSLog( @"Failed to load %qu bytes for %@", (long long)info.length, path );
-	free( buffer );
-	return nil;
+        NSLog( @"Failed to load %qu bytes for %@", (long long)info.length, path );
+        free( buffer );
+        return nil;
     }
     
     return [NSData dataWithBytesNoCopy:buffer length:info.length];
@@ -183,8 +183,8 @@ static inline NSString * readTrimmedString( NSData *data, unsigned long offset )
 {
     NSData *data = [self dataWithContentsOfObject:objectPath];
     if( data ) {
-	// NSUTF8StringEncoding / NSISOLatin1StringEncoding / NSUnicodeStringEncoding
-	return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+        // NSUTF8StringEncoding / NSISOLatin1StringEncoding / NSUnicodeStringEncoding
+        return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
     }
     
     return nil;
@@ -202,106 +202,106 @@ static inline NSString * readTrimmedString( NSData *data, unsigned long offset )
     //--- Start with WINDOWS object ---
     NSData *windowsData = [self dataWithContentsOfObject:@"/#WINDOWS"];
     NSData *stringsData = [self dataWithContentsOfObject:@"/#STRINGS"];
-
+    
     if( windowsData && stringsData ) {
-	const unsigned long entryCount = readLong( windowsData, 0 );
-	const unsigned long entrySize = readLong( windowsData, 4 );
+        const unsigned long entryCount = readLong( windowsData, 0 );
+        const unsigned long entrySize = readLong( windowsData, 4 );
         NSLog( @"Entries: %lu x %lu bytes", entryCount, entrySize );
-	
-	for( int entryIndex = 0; entryIndex < entryCount; ++entryIndex ) {
-	    unsigned long entryOffset = 8 + ( entryIndex * entrySize );
-	    
-	    if( !_title || ( [_title length] == 0 ) ) { 
-		_title = readTrimmedString( stringsData, readLong( windowsData, entryOffset + 0x14 ) );
-		NSLog( @"Title: %@", _title );
-	    }
-	    
-	    if( !_tocPath || ( [_tocPath length] == 0 ) ) { 
-		_tocPath = readString( stringsData, readLong( windowsData, entryOffset + 0x60 ) );
-		NSLog( @"Table of contents: %@", _tocPath );
-	    }
-	    
-	    if( !_indexPath || ( [_indexPath length] == 0 ) ) { 
-		_indexPath = readString( stringsData, readLong( windowsData, entryOffset + 0x64 ) );
-		NSLog( @"Index: %@", _indexPath );
-	    }
-	    
-	    if( !_homePath || ( [_homePath length] == 0 ) ) { 
-		_homePath = readString( stringsData, readLong( windowsData, entryOffset + 0x68 ) );
-		NSLog( @"Home: %@", _homePath );
-	    }
-	}
+        
+        for( int entryIndex = 0; entryIndex < entryCount; ++entryIndex ) {
+            unsigned long entryOffset = 8 + ( entryIndex * entrySize );
+            
+            if( !_title || ( [_title length] == 0 ) ) {
+                _title = readTrimmedString( stringsData, readLong( windowsData, entryOffset + 0x14 ) );
+                NSLog( @"Title: %@", _title );
+            }
+            
+            if( !_tocPath || ( [_tocPath length] == 0 ) ) {
+                _tocPath = readString( stringsData, readLong( windowsData, entryOffset + 0x60 ) );
+                NSLog( @"Table of contents: %@", _tocPath );
+            }
+            
+            if( !_indexPath || ( [_indexPath length] == 0 ) ) {
+                _indexPath = readString( stringsData, readLong( windowsData, entryOffset + 0x64 ) );
+                NSLog( @"Index: %@", _indexPath );
+            }
+            
+            if( !_homePath || ( [_homePath length] == 0 ) ) {
+                _homePath = readString( stringsData, readLong( windowsData, entryOffset + 0x68 ) );
+                NSLog( @"Home: %@", _homePath );
+            }
+        }
     }
     
     //--- Use SYSTEM object ---
     NSData *systemData = [self dataWithContentsOfObject:@"/#SYSTEM"];
     if( systemData == nil ) {
-	return NO;
+        return NO;
     }
-        
+    
     unsigned int maxOffset = [systemData length];
     for( unsigned int offset = 0; offset < maxOffset; offset += readShort( systemData, offset + 2 ) + 4 ) {
-	switch( readShort( systemData, offset ) ) {
-	    // Table of contents file
-	    case 0:
-		if( !_tocPath || ( [_tocPath length] == 0 ) ) {
-		    _tocPath = readString( systemData, offset + 4 );
+        switch( readShort( systemData, offset ) ) {
+                // Table of contents file
+            case 0:
+                if( !_tocPath || ( [_tocPath length] == 0 ) ) {
+                    _tocPath = readString( systemData, offset + 4 );
                     NSLog( @"SYSTEM Table of contents: %@", _tocPath );
-		}
-		break;
-		
-		// Index file
-	    case 1:
-		if( !_indexPath || ( [_indexPath length] == 0 ) ) {
-		    _indexPath = readString( systemData, offset + 4 );
+                }
+                break;
+                
+                // Index file
+            case 1:
+                if( !_indexPath || ( [_indexPath length] == 0 ) ) {
+                    _indexPath = readString( systemData, offset + 4 );
                     NSLog( @"SYSTEM Index: %@", _indexPath );
-		}
-		break;
-		
-		// Home page
-	    case 2:
-		if( !_homePath || ( [_homePath length] == 0 ) ) {
-		    _homePath = readString( systemData, offset + 4 );
+                }
+                break;
+                
+                // Home page
+            case 2:
+                if( !_homePath || ( [_homePath length] == 0 ) ) {
+                    _homePath = readString( systemData, offset + 4 );
                     NSLog( @"SYSTEM Home: %@", _homePath );
-		}
-		break;
-		
-		// Title
-	    case 3:
-		if( !_title || ( [_title length] == 0 ) ) {
-		    _title = readTrimmedString( systemData, offset + 4 );
-		    NSLog( @"SYSTEM Title: %@", _title );
-		}
-		break;
-		
-		// Compiled file
-	    case 6:
-		NSLog( @"SYSTEM compiled file: %@", readString( systemData, offset + 4 ) );
-		break;
-		
-		// Compiler
-	    case 9:
-		NSLog( @"SYSTEM Compiler: %@", readString( systemData, offset + 4 ) );
-		break;
-		
-		// Default font
-	    case 16:
-		NSLog( @"SYSTEM Default font: %@", readString( systemData, offset + 4 ) );
-		break;
-		
-		// Other data not handled
-	    default:
-		break;
-	}
+                }
+                break;
+                
+                // Title
+            case 3:
+                if( !_title || ( [_title length] == 0 ) ) {
+                    _title = readTrimmedString( systemData, offset + 4 );
+                    NSLog( @"SYSTEM Title: %@", _title );
+                }
+                break;
+                
+                // Compiled file
+            case 6:
+                NSLog( @"SYSTEM compiled file: %@", readString( systemData, offset + 4 ) );
+                break;
+                
+                // Compiler
+            case 9:
+                NSLog( @"SYSTEM Compiler: %@", readString( systemData, offset + 4 ) );
+                break;
+                
+                // Default font
+            case 16:
+                NSLog( @"SYSTEM Default font: %@", readString( systemData, offset + 4 ) );
+                break;
+                
+                // Other data not handled
+            default:
+                break;
+        }
     }
-
+    
     //--- Compute unique id ---
     unsigned char digest[ SHA_DIGEST_LENGTH ];
     SHA1( [systemData bytes], [systemData length], digest );
     unsigned int *ptr = (unsigned int *) digest;
     _uniqueId = [[NSString alloc] initWithFormat:@"%x%x%x%x%x", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4]];
     NSLog( @"UniqueId=%@", _uniqueId );
-
+    
     // Check for empty string titles
     if( [_title length] == 0 )  {
         _title = nil;
@@ -309,7 +309,7 @@ static inline NSString * readTrimmedString( NSData *data, unsigned long offset )
     else {
         [_title retain];
     }
-
+    
     // Check for lack of index page
     if( !_homePath ) {
         _homePath = [self findHomeForPath:@"/"];
@@ -333,17 +333,17 @@ static inline NSString * readTrimmedString( NSData *data, unsigned long offset )
     if( [self hasObjectWithPath:testPath] ) {
         return testPath;
     }
-
+    
     testPath = [NSString stringWithFormat:@"%@%@default.html", basePath, separator];
     if( [self hasObjectWithPath:testPath] ) {
         return testPath;
     }
-
+    
     testPath = [NSString stringWithFormat:@"%@%@default.htm", basePath, separator];
     if( [self hasObjectWithPath:testPath] ) {
         return testPath;
     }
-
+    
     return [NSString stringWithFormat:@"%@%@index.html", basePath, separator];
 }
 

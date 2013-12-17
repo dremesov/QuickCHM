@@ -14,14 +14,6 @@
 				<string>com.microsoft.chm-archive</string>
 			</array>
 		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>QLGenerator</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>dyn.ah62d4rv4ge80g4dr</string>
-			</array>
-		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
